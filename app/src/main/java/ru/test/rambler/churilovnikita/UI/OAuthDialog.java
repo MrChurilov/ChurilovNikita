@@ -1,4 +1,4 @@
-package ru.test.rambler.churilovnikita.UI;
+package ru.test.rambler.churilovnikita.ui;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -10,11 +10,15 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import ru.test.rambler.churilovnikita.App;
 import ru.test.rambler.churilovnikita.Constants;
 import ru.test.rambler.churilovnikita.Managers.HelpManager;
+import ru.test.rambler.churilovnikita.PrefHelper;
 import ru.test.rambler.churilovnikita.R;
 
 /**
@@ -23,12 +27,15 @@ import ru.test.rambler.churilovnikita.R;
 public class OAuthDialog extends DialogFragment {
     @BindView(R.id.web_oauth)
     WebView webViewOauth;
+    @Inject
+    PrefHelper prefHelper;
 
     private Unbinder unbinder;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        App.getComponent().inject(this);
     }
 
     private class MyWebViewClient extends WebViewClient {
@@ -53,7 +60,7 @@ public class OAuthDialog extends DialogFragment {
     private void saveAccessToken(String url) {
         String paths[] = url.split("access_token=");
         if (paths.length > 1) {
-            HelpManager.setAccessToken(paths[1]);
+            prefHelper.setAccessToken(paths[1]);
             dismiss();
             //return;
         }

@@ -1,9 +1,6 @@
-package ru.test.rambler.churilovnikita.Network;
+package ru.test.rambler.churilovnikita.network;
 
 import com.google.gson.JsonArray;
-
-
-import java.util.ArrayList;
 
 public class RecentResponce {
     private JsonArray data;

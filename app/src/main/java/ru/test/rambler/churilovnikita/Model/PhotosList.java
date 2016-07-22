@@ -1,12 +1,10 @@
-package ru.test.rambler.churilovnikita.Model;
+package ru.test.rambler.churilovnikita.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
-
-import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,18 +13,27 @@ import ru.test.rambler.churilovnikita.Constants;
 
 
 public class PhotosList implements Parcelable {
-    private List<Photo> photoList = new ArrayList<Photo>();
+    private List<Photo> mPhotoList = new ArrayList<Photo>();
 
     public PhotosList() {
     }
 
+    public PhotosList(Parcel source) {
+        int n = source.readInt();
+        for (int i = 0; i < n; i++) {
+            String urlPhoto = source.readString();
+            int countLikes = source.readInt();
+            ArrayList<String> tags = source.createStringArrayList();
+            mPhotoList.add(new Photo(urlPhoto, tags, countLikes));
+        }
+    }
 
     public void addPhoto(Photo photo) {
-        photoList.add(photo);
+        mPhotoList.add(photo);
     }
 
     public List<Photo> getPhotoList() {
-        return photoList;
+        return mPhotoList;
     }
 
     public PhotosList(JsonArray json) {
@@ -43,7 +50,7 @@ public class PhotosList implements Parcelable {
                 }
 
                 Photo photo = new Photo(urlPhoto, tagsList, countLikes);
-                photoList.add(photo);
+                mPhotoList.add(photo);
 
             } catch (Exception e) {
                 Log.e(Constants.TAG, e.toString());
@@ -53,26 +60,25 @@ public class PhotosList implements Parcelable {
     }
 
     public int countPhoto() {
-        return photoList.size();
+        return mPhotoList.size();
     }
 
     public Photo getPhoto(int position) {
-        return photoList.get(position);
+        return mPhotoList.get(position);
     }
 
     @Override
     public int describeContents() {
         return 0;
-
     }
 
     @Override
     public void writeToParcel(Parcel parcel, int f) {
-        int n = photoList.size();
+        int n = mPhotoList.size();
         parcel.writeInt(n);
         if (n > 0) {
-            for (int i = 0; i < photoList.size(); i++) {
-                Photo photo = photoList.get(i);
+            for (int i = 0; i < mPhotoList.size(); i++) {
+                Photo photo = mPhotoList.get(i);
                 parcel.writeInt(photo.countLikes);
                 parcel.writeString(photo.UrlPhoto);
                 parcel.writeStringList(photo.tags);
@@ -90,15 +96,6 @@ public class PhotosList implements Parcelable {
         }
     };
 
-    public PhotosList(Parcel source) {
-        int n = source.readInt();
-        for (int i = 0; i < n; i++) {
-            String urlPhoto = source.readString();
-            int countLikes = source.readInt();
-            ArrayList<String> tags = source.createStringArrayList();
-            photoList.add(new Photo(urlPhoto, tags, countLikes));
-        }
-    }
 
     public static class Photo {
 

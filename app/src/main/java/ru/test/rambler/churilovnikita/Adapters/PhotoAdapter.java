@@ -1,4 +1,4 @@
-package ru.test.rambler.churilovnikita.Adapters;
+package ru.test.rambler.churilovnikita.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -11,12 +11,11 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.volokh.danylo.hashtaghelper.HashTagHelper;
 
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import ru.test.rambler.churilovnikita.UI.FullScreenActivity;
+import ru.test.rambler.churilovnikita.ui.FullScreenActivity;
 import ru.test.rambler.churilovnikita.Interfaces.Searchable;
-import ru.test.rambler.churilovnikita.Model.PhotosList;
+import ru.test.rambler.churilovnikita.model.PhotosList;
 import ru.test.rambler.churilovnikita.R;
 
 
@@ -87,7 +86,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
             for (String tag : photo.getTags()) {
                 hashTags.append("#" + tag + " ");
             }
-            mTagsTxtV.setText(hashTags.length() > 0 ? hashTags.toString() : mContext.getResources().getString(R.string.NoTags));
+            mTagsTxtV.setText(hashTags.length() > 0 ? hashTags.toString() : mContext.getResources().getString(R.string.no_tags));
             HashTagHelper mHashTagHelper = HashTagHelper.Creator.create(mContext.getResources().getColor(R.color.colorPrimary), new HashTagHelper.OnHashTagClickListener() {
                 @Override
                 public void onHashTagClicked(String hashTag) {

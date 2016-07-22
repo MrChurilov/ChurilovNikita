@@ -1,9 +1,8 @@
-package ru.test.rambler.churilovnikita.UI;
+package ru.test.rambler.churilovnikita.ui;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -22,17 +21,21 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import ru.test.rambler.churilovnikita.Adapters.PhotoAdapter;
+import ru.test.rambler.churilovnikita.App;
+import ru.test.rambler.churilovnikita.PrefHelper;
+import ru.test.rambler.churilovnikita.adapters.PhotoAdapter;
 import ru.test.rambler.churilovnikita.Constants;
 import ru.test.rambler.churilovnikita.Managers.HelpManager;
 import ru.test.rambler.churilovnikita.Interfaces.Searchable;
-import ru.test.rambler.churilovnikita.Model.PhotosList;
-import ru.test.rambler.churilovnikita.Network.InstagramService;
-import ru.test.rambler.churilovnikita.Network.RecentResponce;
-import ru.test.rambler.churilovnikita.Network.ServiceFactory;
+import ru.test.rambler.churilovnikita.model.PhotosList;
+import ru.test.rambler.churilovnikita.network.InstagramService;
+import ru.test.rambler.churilovnikita.network.RecentResponce;
+import ru.test.rambler.churilovnikita.network.ServiceFactory;
 import ru.test.rambler.churilovnikita.R;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -54,6 +57,9 @@ public class PhotoFragment extends Fragment implements SearchView.OnQueryTextLis
     private Searchable mCallback;
     private PhotosList photosList;
 
+    @Inject
+    PrefHelper prefHelper;
+
     private final static String PHOTO_LIST_STATE = "ru.test.rambler.churilovnikita.fragment.photo_list_state";
     private static final int REQUEST_TOKEN = 0;
 
@@ -66,6 +72,7 @@ public class PhotoFragment extends Fragment implements SearchView.OnQueryTextLis
         service = ServiceFactory.createRetrofitService(InstagramService.class);
         mContext = getActivity();
         mCallback = this;
+        App.getComponent().inject(this);
     }
 
     @Override
@@ -92,7 +99,7 @@ public class PhotoFragment extends Fragment implements SearchView.OnQueryTextLis
         adapter = new PhotoAdapter(mContext, new PhotosList(), mCallback);
         setHasOptionsMenu(true);
 
-        if (HelpManager.getAccessToken().compareTo("") == 0 && HelpManager.isOnline()) {
+        if (prefHelper.isTokenExist() && HelpManager.isOnline(mContext)) {
             showDialog();
         } else if (savedInstanceState != null) {
             photosList = savedInstanceState.getParcelable(PHOTO_LIST_STATE);
@@ -107,8 +114,8 @@ public class PhotoFragment extends Fragment implements SearchView.OnQueryTextLis
     }
 
     void showDialog() {
-        if (!HelpManager.isOnline()) {
-            HelpManager.showOfflineDialog();
+        if (!HelpManager.isOnline(mContext)) {
+            HelpManager.showOfflineDialog(mContext);
             return;
         }
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
@@ -151,11 +158,11 @@ public class PhotoFragment extends Fragment implements SearchView.OnQueryTextLis
 
     //похорошему нужно вынести в отдельный класс
     public void searchByTag(String query) {
-        if (!HelpManager.isOnline()) {
-            HelpManager.showOfflineDialog();
+        if (!HelpManager.isOnline(mContext)) {
+            HelpManager.showOfflineDialog(mContext);
             return;
         }
-        service.getRecentPhotosByTag(query.trim(), HelpManager.getAccessToken())
+        service.getRecentPhotosByTag(query.trim(), prefHelper.getAccessToken())
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<RecentResponce>() {
@@ -167,8 +174,8 @@ public class PhotoFragment extends Fragment implements SearchView.OnQueryTextLis
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.d(Constants.TAG, "Get Recent Photos by Tag Error:" + e.getMessage());
-                        Toast.makeText(mContext, mContext.getString(R.string.LoadingError), Toast.LENGTH_SHORT).show();
+                        Log.e(Constants.TAG, "Get Recent Photos by Tag Error:" + e.getMessage());
+                        Toast.makeText(mContext, mContext.getString(R.string.loading_error), Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -186,11 +193,11 @@ public class PhotoFragment extends Fragment implements SearchView.OnQueryTextLis
     }
 
     private void loadRecentPhoto() {
-        if (!HelpManager.isOnline()) {
-            HelpManager.showOfflineDialog();
+        if (!HelpManager.isOnline(mContext)) {
+            HelpManager.showOfflineDialog(mContext);
             return;
         }
-        service.getRecentPhotos(HelpManager.getAccessToken())
+        service.getRecentPhotos(prefHelper.getAccessToken())
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<RecentResponce>() {
@@ -202,8 +209,8 @@ public class PhotoFragment extends Fragment implements SearchView.OnQueryTextLis
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.d(Constants.TAG, "Get Recent Photos Error:" + e.getMessage());
-                        Toast.makeText(mContext, mContext.getString(R.string.LoadingError), Toast.LENGTH_SHORT).show();
+                        Log.e(Constants.TAG, "Get Recent Photos Error:" + e.getMessage());
+                        Toast.makeText(mContext, mContext.getString(R.string.loading_error), Toast.LENGTH_SHORT).show();
                     }
 
                     @Override

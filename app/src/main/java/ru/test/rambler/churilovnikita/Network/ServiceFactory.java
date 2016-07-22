@@ -1,4 +1,4 @@
-package ru.test.rambler.churilovnikita.Network;
+package ru.test.rambler.churilovnikita.network;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

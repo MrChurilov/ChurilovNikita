@@ -1,4 +1,4 @@
-package ru.test.rambler.churilovnikita.UI;
+package ru.test.rambler.churilovnikita.ui;
 
 
 import android.content.Context;

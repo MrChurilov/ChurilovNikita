@@ -5,12 +5,12 @@
     <string name="instagram_id">4efdb4d9b0a744dabee41b7925452c1c</string>
     <string name="instagram_secret"> 04aade2d4b784558a6cf49a28b917891</string>
     <string name="callbackurl">www.rambler.ru/</string>
-    <string name="NoTags">No tags(</string>
-    <string name="LoadingError">Loading Error</string>
-    <string name="LoadingData">No data yet</string>
+    <string name="no_tags">No tags(</string>
+    <string name="loading_error">Loading Error</string>
+    <string name="loading_data">No data yet</string>
     <string name="action_search">Search tags</string>
-    <string name="NeedAuth">Need Authorization</string>
-    <string name="Offline">No Network Connection</string>
+    <string name="need_auth">Need Authorization</string>
+    <string name="offline">No Network Connection</string>
     <plurals name="likes_plural">
         <item quantity="one">%d like</item>
         <item quantity="other">%d likes</item>

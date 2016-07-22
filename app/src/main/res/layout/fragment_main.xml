@@ -3,7 +3,7 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent"
 
-             tools:context=".UI.PhotoFragment"
+             tools:context=".ui.PhotoFragment"
              tools:showIn="@layout/activity_main">
 
 
@@ -19,7 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:text="@string/LoadingData"
+        android:text="@string/loading_data"
         android:textSize="@dimen/TextSize"
         android:layout_gravity="center"/>
 
