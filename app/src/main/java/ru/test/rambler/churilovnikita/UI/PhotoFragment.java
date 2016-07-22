@@ -59,6 +59,8 @@ public class PhotoFragment extends Fragment implements SearchView.OnQueryTextLis
 
     @Inject
     PrefHelper prefHelper;
+    @Inject
+    ServiceFactory serviceFactory;
 
     private final static String PHOTO_LIST_STATE = "ru.test.rambler.churilovnikita.fragment.photo_list_state";
     private static final int REQUEST_TOKEN = 0;
@@ -69,10 +71,10 @@ public class PhotoFragment extends Fragment implements SearchView.OnQueryTextLis
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        service = ServiceFactory.createRetrofitService(InstagramService.class);
+        App.getComponent().inject(this);
+        service = serviceFactory.createRetrofitService(InstagramService.class);
         mContext = getActivity();
         mCallback = this;
-        App.getComponent().inject(this);
     }
 
     @Override
@@ -99,7 +101,7 @@ public class PhotoFragment extends Fragment implements SearchView.OnQueryTextLis
         adapter = new PhotoAdapter(mContext, new PhotosList(), mCallback);
         setHasOptionsMenu(true);
 
-        if (prefHelper.isTokenExist() && HelpManager.isOnline(mContext)) {
+        if (!prefHelper.isTokenExist() && HelpManager.isOnline(mContext)) {
             showDialog();
         } else if (savedInstanceState != null) {
             photosList = savedInstanceState.getParcelable(PHOTO_LIST_STATE);
@@ -156,7 +158,7 @@ public class PhotoFragment extends Fragment implements SearchView.OnQueryTextLis
         return false;
     }
 
-    //похорошему нужно вынести в отдельный класс
+    //похорошему нужно вынести в отдельный класс()
     public void searchByTag(String query) {
         if (!HelpManager.isOnline(mContext)) {
             HelpManager.showOfflineDialog(mContext);

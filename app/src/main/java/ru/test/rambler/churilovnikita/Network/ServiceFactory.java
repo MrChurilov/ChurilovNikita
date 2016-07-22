@@ -12,10 +12,16 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ServiceFactory {
     public static final String API_BASE_URL = "https://api.instagram.com";
-    public static <T> T createRetrofitService(final Class<T> clazz) {
-        OkHttpClient client = new OkHttpClient();
+    private OkHttpClient mClient;
+
+    public ServiceFactory(OkHttpClient client) {
+        mClient = client;
+    }
+
+    public <T> T createRetrofitService(final Class<T> clazz) {
+        /*OkHttpClient client = new OkHttpClient();
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        client = builder.build();
+        client = builder.build();*/
 
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(RecentResponce.class, new PhotoDeserializer())
@@ -23,7 +29,7 @@ public class ServiceFactory {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(API_BASE_URL)
-                .client(client)
+                .client(mClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
